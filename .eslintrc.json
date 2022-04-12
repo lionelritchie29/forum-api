@@ -12,7 +12,9 @@
   "rules": {
     "linebreak-style": ["error", "windows"],
     "no-underscore-dangle": "off",
-    "class-methods-use-this": "off"
+    "class-methods-use-this": "off",
+    "implicit-arrow-linebreak": "off",
+    "function-paren-newline": "off"
   },
   "plugins": ["jest"]
 }
