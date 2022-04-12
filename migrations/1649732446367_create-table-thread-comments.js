@@ -30,8 +30,8 @@ exports.up = (pgm) => {
 
   pgm.addConstraint('thread_comments', 'threads_comments_thread_fk', {
     foreignKeys: {
-      columns: 'id',
-      references: 'threads',
+      columns: 'threadId',
+      references: 'threads(id)',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     },
@@ -39,8 +39,8 @@ exports.up = (pgm) => {
 
   pgm.addConstraint('thread_comments', 'threads_comments_user_fk', {
     foreignKeys: {
-      columns: 'id',
-      references: 'users',
+      columns: 'userId',
+      references: 'users(id)',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     },

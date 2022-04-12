@@ -29,8 +29,8 @@ exports.up = (pgm) => {
 
   pgm.addConstraint('threads', 'threads_user_fk', {
     foreignKeys: {
-      columns: 'id',
-      references: 'users',
+      columns: 'userId',
+      references: 'users(id)',
       onDelete: 'cascade',
       onUpdate: 'cascade',
     },
