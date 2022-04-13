@@ -43,6 +43,12 @@ DomainErrorTranslator._directories = {
   'THREAD_CREATE.NOT_CORRECT_DATA_TYPE': new InvariantError(
     'tidak dapat membuat thread baru karena tipe data tidak sesuai',
   ),
+  'THREAD_COMMENT_CREATE.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError(
+    'tidak dapat membuat comment baru karena properti yang dibutuhkan tidak ada',
+  ),
+  'THREAD_COMMENT_CREATE.NOT_CORRECT_DATA_TYPE': new InvariantError(
+    'tidak dapat membuat comment baru karena tipe data tidak sesuai',
+  ),
 };
 
 module.exports = DomainErrorTranslator;
