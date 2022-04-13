@@ -3,7 +3,7 @@ const ThreadCreated = require('../ThreadCreated');
 describe('ThreadCreated', () => {
   it('should throw error when payload didn`t contain needed property', () => {
     const payload = {
-      body: 'Thread Body',
+      title: 'Thread Body',
       id: 'thread-123',
     };
 
@@ -16,7 +16,7 @@ describe('ThreadCreated', () => {
     const payload = {
       id: 'hehe',
       title: {},
-      body: 123,
+      owner: 123,
     };
 
     expect(() => new ThreadCreated(payload)).toThrowError('THREAD_CREATED.NOT_CORRECT_DATA_TYPE');
@@ -25,14 +25,14 @@ describe('ThreadCreated', () => {
   it('should create ThreadCreated object correctly when given correct payload', () => {
     const payload = {
       id: 'thread-123',
-      body: 'Thread Body',
-      title: 'Thread Title',
+      title: 'Thread Body',
+      owner: 'user-123',
     };
 
     const threadCreate = new ThreadCreated(payload);
 
     expect(threadCreate.id).toEqual(payload.id);
-    expect(threadCreate.body).toEqual(payload.body);
+    expect(threadCreate.owner).toEqual(payload.owner);
     expect(threadCreate.title).toEqual(payload.title);
   });
 });

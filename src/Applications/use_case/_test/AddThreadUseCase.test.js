@@ -14,7 +14,7 @@ describe('AddThreadUseCase', () => {
     const expected = new ThreadCreated({
       id: 'thread-123',
       title: 'Thread Title',
-      body: 'Thread Body',
+      owner: 'user-123',
     });
 
     const mockThreadRepository = new ThreadRepository();
@@ -24,7 +24,7 @@ describe('AddThreadUseCase', () => {
         new ThreadCreated({
           id: 'thread-123',
           title: 'Thread Title',
-          body: 'Thread Body',
+          owner: 'user-123',
         }),
       ),
     );
