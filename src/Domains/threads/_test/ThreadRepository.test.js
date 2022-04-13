@@ -7,5 +7,9 @@ describe('ThreadRepository', () => {
     await expect(() => threadRepo.addThread('user-123', {})).rejects.toThrowError(
       'THREAD_REPOSITORY.ADD_THREAD_NOT_IMPLEMENTED',
     );
+
+    await expect(() => threadRepo.verifyThread('thread-123')).rejects.toThrowError(
+      'THREAD_REPOSITORY.VERIFY_THREAD_NOT_IMPLEMENTED',
+    );
   });
 });

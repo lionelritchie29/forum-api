@@ -1,5 +1,6 @@
 const ThreadsTableTesthelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const InvariantError = require('../../../Commons/exceptions/InvariantError');
 const ThreadCreate = require('../../../Domains/threads/entities/ThreadCreate');
 const ThreadCreated = require('../../../Domains/threads/entities/ThreadCreated');
 const pool = require('../../database/postgres/pool');
@@ -36,6 +37,28 @@ describe('ThreadRepositoryPostgres', () => {
           owner: 'user-123',
         }),
       );
+    });
+  });
+
+  describe('verifyThread function', () => {
+    it('should return valid thread correctly', async () => {
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTesthelper.addThread({ threadId: 'thread-123', userId: 'user-123' });
+      const fakeIdGen = () => '123';
+
+      const threadRepo = new ThreadRepositoryPostgres(pool, fakeIdGen);
+
+      await expect(threadRepo.verifyThread('thread-123')).resolves.not.toThrowError(InvariantError);
+    });
+
+    it('should throw error when thread id does not valid', async () => {
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTesthelper.addThread({ threadId: 'thread-123', userId: 'user-123' });
+      const fakeIdGen = () => '123';
+
+      const threadRepo = new ThreadRepositoryPostgres(pool, fakeIdGen);
+
+      await expect(threadRepo.verifyThread('thread-999')).rejects.toThrowError(InvariantError);
     });
   });
 });
