@@ -102,5 +102,33 @@ describe('/threads endpoint', () => {
         'tidak dapat membuat thread baru karena tipe data tidak sesuai',
       );
     });
+
+    it('should response with 201 and the new thread', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const requestPayload = {
+        title: 'Thread Title',
+        body: 'Thread Body',
+      };
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.addedThread).toBeDefined();
+    });
   });
 });
