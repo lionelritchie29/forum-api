@@ -7,6 +7,10 @@ class ThreadCommentRepository {
   async deleteComment(id) {
     throw new Error('THREAD_COMMENT_REPOSITORY.DELETE_COMMENT_NOT_IMPLEMENTED');
   }
+
+  async verifyCommentOwner(id, userId) {
+    throw new Error('THREAD_COMMENT_REPOSITORY.VERIFY_COMMENT_OWNER_NOT_IMPLEMENTED');
+  }
 }
 
 module.exports = ThreadCommentRepository;

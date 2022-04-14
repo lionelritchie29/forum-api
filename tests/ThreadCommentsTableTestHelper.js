@@ -26,6 +26,14 @@ const ThreadCommentsTableTestHelper = {
     const result = await pool.query(query);
     return result.rowCount > 0 ? result.rows[0] : null;
   },
+
+  async cleanTable() {
+    const query = {
+      text: 'DELETE FROM thread_comments WHERE 1 = 1',
+    };
+
+    await pool.query(query);
+  },
 };
 
 module.exports = ThreadCommentsTableTestHelper;

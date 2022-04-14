@@ -1,3 +1,4 @@
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const ThreadCommentCreated = require('../../Domains/threads/entities/ThreadCommentCreated');
 const ThreadCommentRepository = require('../../Domains/threads/ThreadCommentRepository');
 
@@ -33,6 +34,18 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
 
     const result = await this._pool.query(query);
     return result.rowCount > 0;
+  }
+
+  async verifyCommentOwner(id, userId) {
+    const query = {
+      text: 'SELECT * FROM thread_comments WHERE id = $1 AND "userId" = $2',
+      values: [id, userId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new AuthorizationError('Comment could only be deleted by its owner');
+    }
   }
 }
 
