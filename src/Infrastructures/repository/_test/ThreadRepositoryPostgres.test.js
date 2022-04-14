@@ -1,6 +1,7 @@
 const ThreadsTableTesthelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const InvariantError = require('../../../Commons/exceptions/InvariantError');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const ThreadCreate = require('../../../Domains/threads/entities/ThreadCreate');
 const ThreadCreated = require('../../../Domains/threads/entities/ThreadCreated');
 const pool = require('../../database/postgres/pool');
@@ -58,7 +59,7 @@ describe('ThreadRepositoryPostgres', () => {
 
       const threadRepo = new ThreadRepositoryPostgres(pool, fakeIdGen);
 
-      await expect(threadRepo.verifyThread('thread-999')).rejects.toThrowError(InvariantError);
+      await expect(threadRepo.verifyThread('thread-999')).rejects.toThrowError(NotFoundError);
     });
   });
 });
