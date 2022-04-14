@@ -24,6 +24,16 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
       owner: comment.userId,
     });
   }
+
+  async deleteComment(id) {
+    const query = {
+      text: 'UPDATE thread_comments SET is_deleted = true WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rowCount > 0;
+  }
 }
 
 module.exports = ThreadCommentRepositoryPostgres;

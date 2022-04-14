@@ -7,5 +7,8 @@ describe('ThreadCommentRepository', () => {
     await expect(() =>
       commentRepo.addComment('user-123', 'thread-123', 'content'),
     ).rejects.toThrowError('THREAD_COMMENT_REPOSITORY.ADD_COMMENT_NOT_IMPLEMENTED');
+    await expect(() => commentRepo.deleteComment('comment-123')).rejects.toThrowError(
+      'THREAD_COMMENT_REPOSITORY.DELETE_COMMENT_NOT_IMPLEMENTED',
+    );
   });
 });
