@@ -19,6 +19,8 @@ const JwtTokenManager = require('./security/JwtTokenManager');
 const AuthenticationTokenManager = require('../Applications/security/AuthenticationTokenManager');
 const ThreadRepository = require('../Domains/threads/ThreadRepository');
 const ThreadRepositoryPostgres = require('./repository/ThreadRepositoryPostgres');
+const ThreadCommentRepository = require('../Domains/threads/ThreadCommentRepository');
+const ThreadCommentRepositoryPostgres = require('./repository/ThreadCommentRepositoryPostgres');
 
 // use case
 const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
@@ -26,6 +28,7 @@ const LoginUserUseCase = require('../Applications/use_case/LoginUserUseCase');
 const LogoutUserUseCase = require('../Applications/use_case/LogoutUserUseCase');
 const RefreshAuthenticationUseCase = require('../Applications/use_case/RefreshAuthenticationUseCase');
 const AddThreadUseCase = require('../Applications/use_case/AddThreadUseCase');
+const AddCommentUseCase = require('../Applications/use_case/AddCommentUseCase');
 
 // creating container
 const container = createContainer();
@@ -82,6 +85,20 @@ container.register([
   {
     key: ThreadRepository.name,
     Class: ThreadRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        {
+          concrete: pool,
+        },
+        {
+          concrete: nanoid,
+        },
+      ],
+    },
+  },
+  {
+    key: ThreadCommentRepository.name,
+    Class: ThreadCommentRepositoryPostgres,
     parameter: {
       dependencies: [
         {
@@ -178,6 +195,23 @@ container.register([
         {
           name: 'threadRepository',
           internal: ThreadRepository.name,
+        },
+      ],
+    },
+  },
+  {
+    key: AddCommentUseCase.name,
+    Class: AddCommentUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'threadRepository',
+          internal: ThreadRepository.name,
+        },
+        {
+          name: 'commentRepository',
+          internal: ThreadCommentRepository.name,
         },
       ],
     },
