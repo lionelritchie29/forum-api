@@ -385,7 +385,7 @@ describe('/threads endpoint', () => {
     });
   });
 
-  describe('when POST /thread/{threadId}/comments/{commentId}/replies', () => {
+  describe('when POST /threads/{threadId}/comments/{commentId}/replies', () => {
     beforeEach(async () => {
       await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
       await ThreadCommentsTableTestHelper.addComment({
@@ -525,7 +525,7 @@ describe('/threads endpoint', () => {
     });
   });
 
-  describe('when DELETE /thread/{threadId}/comments/{commentId}/replies/{replyId}', () => {
+  describe('when DELETE /threads/{threadId}/comments/{commentId}/replies/{replyId}', () => {
     beforeEach(async () => {
       await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
       await ThreadCommentsTableTestHelper.addComment({
@@ -657,6 +657,70 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
+    });
+  });
+
+  describe('when GET /threads/{threadId}', () => {
+    beforeEach(async () => {
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await ThreadCommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        userId: 'user-123',
+      });
+      await ThreadCommentsTableTestHelper.addComment({
+        id: 'comment-456',
+        threadId: 'thread-123',
+        userId: 'user-123',
+      });
+      await ThreadCommentRepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        commentId: 'comment-123',
+        userId: 'user-123',
+      });
+      await ThreadCommentRepliesTableTestHelper.addReply({
+        id: 'reply-456',
+        commentId: 'comment-123',
+        userId: 'user-123',
+      });
+      await ThreadCommentsTableTestHelper.deleteComment('comment-456');
+      await ThreadCommentRepliesTableTestHelper.deleteReply('reply-123');
+    });
+
+    it('should response with 404 if thread not exist', async () => {
+      const server = await createServer();
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-999',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Thread tidak valid');
+    });
+
+    it('should response with 200 and the specified thread correctly', async () => {
+      const server = await createServer();
+
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-123',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.thread).toBeDefined();
+
+      const commentContents = responseJson.data.thread.comments.map((c) => c.content);
+      expect(commentContents).toContain('**komentar telah dihapus**');
+
+      const replyContents = responseJson.data.thread.comments.map((c) =>
+        c.replies.map((r) => r.content),
+      );
+      expect(replyContents.flat(Infinity)).toContain('**balasan telah dihapus**');
     });
   });
 });

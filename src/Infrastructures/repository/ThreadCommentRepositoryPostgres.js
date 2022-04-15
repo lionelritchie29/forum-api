@@ -69,6 +69,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
         FROM thread_comments tc
         JOIN users u ON u.id = tc."userId"
         WHERE "threadId" = $1
+        ORDER BY tc."createdAt" asc
       `,
       values: [threadId],
     };

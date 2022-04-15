@@ -17,6 +17,15 @@ const ThreadCommentsTableTestHelper = {
     await pool.query(query);
   },
 
+  async deleteComment(id) {
+    const query = {
+      text: 'UPDATE thread_comments SET is_deleted = true WHERE id = $1',
+      values: [id],
+    };
+
+    await pool.query(query);
+  },
+
   async getComment(id) {
     const query = {
       text: 'SELECT * FROM thread_comments WHERE id = $1',
