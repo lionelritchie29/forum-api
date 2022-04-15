@@ -11,13 +11,14 @@ describe('ThreadCommentReplyRepositoryPostgres', () => {
   });
 
   afterEach(async () => {
-    await UsersTableTestHelper.cleanTable();
     await ThreadCommentRepliesTableTestHelper.cleanTable();
     await ThreadCommentsTableTestHelper.cleanTable();
     await ThreadsTableTesthelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   it('should return added reply correctly', async () => {
+    await UsersTableTestHelper.cleanTable();
     await UsersTableTestHelper.addUser({ id: 'user-123' });
     await ThreadsTableTesthelper.addThread({ id: 'thread-123', userId: 'user-123' });
     await ThreadCommentsTableTestHelper.addComment({
