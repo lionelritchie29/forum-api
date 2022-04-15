@@ -13,7 +13,7 @@ exports.up = (pgm) => {
       type: 'TEXT',
       notNull: true,
     },
-    threadReplyId: {
+    threadCommentId: {
       type: 'TEXT',
       notNull: true,
     },
@@ -30,7 +30,7 @@ exports.up = (pgm) => {
 
   pgm.addConstraint('thread_comment_replies', 'threads_comments_replies_thread_comment_fk', {
     foreignKeys: {
-      columns: 'threadReplyId',
+      columns: 'threadCommentId',
       references: 'thread_comments(id)',
       onDelete: 'cascade',
       onUpdate: 'cascade',
