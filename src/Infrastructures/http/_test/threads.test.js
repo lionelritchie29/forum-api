@@ -5,6 +5,7 @@ const createServer = require('../createServer');
 const pool = require('../../database/postgres/pool');
 const AuthenticationTokenManager = require('../../../Applications/security/AuthenticationTokenManager');
 const ThreadCommentsTableTestHelper = require('../../../../tests/ThreadCommentsTableTestHelper');
+const ThreadCommentRepliesTableTestHelper = require('../../../../tests/ThreadCommentRepliesTableTestHelper');
 
 describe('/threads endpoint', () => {
   afterAll(async () => {
@@ -12,12 +13,14 @@ describe('/threads endpoint', () => {
   });
 
   afterEach(async () => {
+    await ThreadCommentRepliesTableTestHelper.cleanTable();
     await ThreadCommentsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
   });
 
   beforeEach(async () => {
+    await UsersTableTestHelper.cleanTable();
     await UsersTableTestHelper.addUser({
       username: 'lionel',
       password: 'secret',
@@ -26,7 +29,7 @@ describe('/threads endpoint', () => {
   });
 
   describe('when POST /threads', () => {
-    it('should response with 400 if no authorization header passed', async () => {
+    it('should response with 401 if no authorization header passed', async () => {
       const server = await createServer(container);
 
       const requestPayload = {
@@ -379,6 +382,146 @@ describe('/threads endpoint', () => {
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(200);
       expect(responseJson.status).toEqual('success');
+    });
+  });
+
+  describe('when POST /thread/{threadId}/comments/{commentId}/replies', () => {
+    beforeEach(async () => {
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await ThreadCommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        userId: 'user-123',
+      });
+    });
+
+    it('should response with 401 if no authorization header passed', async () => {
+      const server = await createServer(container);
+
+      const requestPayload = {
+        content: 'content',
+      };
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/threads-123/comments/comment-123/replies',
+        payload: requestPayload,
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.statusCode).toEqual(401);
+      expect(responseJson.error).toEqual('Unauthorized');
+      expect(responseJson.message).toEqual('Missing authentication');
+    });
+
+    it('should response with 400 if not given needed payload', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const requestPayload = {
+        contenttt: 'content',
+      };
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/thread-123/comments/comment-123/replies',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(400);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual(
+        'tidak dapat membuat reply baru karena properti yang dibutuhkan tidak ada',
+      );
+    });
+
+    it('should response with 404 if thread does not exist', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const requestPayload = {
+        content: 'content',
+      };
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/thread-999/comments/comment-123/replies',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Thread tidak valid');
+    });
+
+    it('should response with 404 if thread comment does not exist', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const requestPayload = {
+        content: 'content',
+      };
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/thread-123/comments/comment-999/replies',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('Comment tidak valid');
+    });
+
+    it('should response with 201 if reply created succesfully', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const requestPayload = {
+        content: 'content',
+      };
+
+      const response = await server.inject({
+        method: 'POST',
+        url: '/threads/thread-123/comments/comment-123/replies',
+        payload: requestPayload,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(201);
+      expect(responseJson.status).toEqual('success');
+      expect(responseJson.data.addedReply).toBeDefined();
     });
   });
 });
