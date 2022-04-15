@@ -135,9 +135,12 @@ describe('/threads endpoint', () => {
   });
 
   describe('when POST /threads/{threadId}/comments', () => {
+    beforeEach(async () => {
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+    });
+
     it('should response with 401 if no authorization header passed', async () => {
       const server = await createServer(container);
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
 
       const requestPayload = {
         content: 'content',
@@ -156,8 +159,6 @@ describe('/threads endpoint', () => {
     });
 
     it('should response with 400 if not given needed payload', async () => {
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-
       const server = await createServer(container);
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
@@ -187,8 +188,6 @@ describe('/threads endpoint', () => {
     });
 
     it('should response with 400 when payload didn`t meet data type spec', async () => {
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-
       const server = await createServer(container);
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
@@ -218,8 +217,6 @@ describe('/threads endpoint', () => {
     });
 
     it('should response with 404 when specified thread does not exist', async () => {
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-
       const server = await createServer(container);
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
@@ -247,8 +244,6 @@ describe('/threads endpoint', () => {
     });
 
     it('should response with 201 and return added comment', async () => {
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-
       const server = await createServer(container);
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
@@ -277,15 +272,17 @@ describe('/threads endpoint', () => {
   });
 
   describe('when DELETE /threads/{threadId}/comments/{commentId}', () => {
-    it('should response with 401 if no authorization header passed', async () => {
-      const server = await createServer(container);
+    beforeEach(async () => {
       await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
       await ThreadCommentsTableTestHelper.addComment({
         id: 'comment-123',
         threadId: 'thread-123',
         userId: 'user-123',
       });
+    });
 
+    it('should response with 401 if no authorization header passed', async () => {
+      const server = await createServer(container);
       const response = await server.inject({
         method: 'DELETE',
         url: '/threads/threads-123/comments/comment-123',
@@ -299,12 +296,6 @@ describe('/threads endpoint', () => {
 
     it('should response with 404 if thread is not valid', async () => {
       const server = await createServer(container);
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-      await ThreadCommentsTableTestHelper.addComment({
-        id: 'comment-123',
-        threadId: 'thread-123',
-        userId: 'user-123',
-      });
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
         username: 'lionel',
@@ -327,12 +318,6 @@ describe('/threads endpoint', () => {
 
     it('should response with 404 if comment is not valid', async () => {
       const server = await createServer(container);
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-      await ThreadCommentsTableTestHelper.addComment({
-        id: 'comment-123',
-        threadId: 'thread-123',
-        userId: 'user-123',
-      });
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
         username: 'lionel',
@@ -355,12 +340,6 @@ describe('/threads endpoint', () => {
 
     it('should response with 403 if comment is deleted by other user', async () => {
       const server = await createServer(container);
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-      await ThreadCommentsTableTestHelper.addComment({
-        id: 'comment-123',
-        threadId: 'thread-123',
-        userId: 'user-123',
-      });
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
         username: 'lionel',
@@ -383,12 +362,6 @@ describe('/threads endpoint', () => {
 
     it('should response with 200 when comment was succesfully deleted', async () => {
       const server = await createServer(container);
-      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
-      await ThreadCommentsTableTestHelper.addComment({
-        id: 'comment-123',
-        threadId: 'thread-123',
-        userId: 'user-123',
-      });
       const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
       const accessToken = await authTokenManager.createAccessToken({
         username: 'lionel',
