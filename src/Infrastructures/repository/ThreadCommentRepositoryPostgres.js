@@ -45,7 +45,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      throw new NotFoundError('Comment not found');
+      throw new NotFoundError('Comment tidak valid');
     }
   }
 
@@ -57,7 +57,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      throw new AuthorizationError('Comment could only be deleted by its owner');
+      throw new AuthorizationError('Comment hanya dapat dihapus oleh owner');
     }
   }
 }

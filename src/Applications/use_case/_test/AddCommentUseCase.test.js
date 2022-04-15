@@ -8,8 +8,8 @@ const ThreadCommentCreated = require('../../../Domains/threads/entities/ThreadCo
 
 describe('AddCommentUseCase', () => {
   afterEach(async () => {
-    await UsersTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
+    await UsersTableTestHelper.cleanTable();
   });
 
   afterAll(async () => {
