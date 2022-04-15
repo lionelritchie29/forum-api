@@ -60,6 +60,7 @@ describe('GetSingleThreadUseCase', () => {
     };
 
     const mockThreadRepo = new ThreadRepository();
+    mockThreadRepo.verifyThread = jest.fn().mockImplementation(() => Promise.resolve);
     mockThreadRepo.getThread = jest.fn().mockImplementation(() =>
       Promise.resolve(
         new Thread({
@@ -122,6 +123,7 @@ describe('GetSingleThreadUseCase', () => {
     });
     const result = await useCase.execute('thread-123');
 
+    expect(mockThreadRepo.verifyThread).toBeCalledWith('thread-123');
     expect(mockThreadRepo.getThread).toBeCalledWith('thread-123');
     expect(mockCommentRepo.getCommentsByThread).toBeCalledWith('thread-123');
     expect(mockReplyRepo.getRepliesByComment).toBeCalledTimes(expected.comments.length);

@@ -8,6 +8,7 @@ class GetSingleThreadUseCase {
   }
 
   async execute(threadId) {
+    await this._threadRepository.verifyThread(threadId);
     const thread = await this._threadRepository.getThread(threadId);
     const comments = await this._commentRepository.getCommentsByThread(threadId);
 
