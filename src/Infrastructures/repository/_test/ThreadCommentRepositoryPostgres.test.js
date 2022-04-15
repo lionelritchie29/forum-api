@@ -6,6 +6,7 @@ const pool = require('../../database/postgres/pool');
 const ThreadCommentRepositoryPostgres = require('../ThreadCommentRepositoryPostgres');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
+const ThreadComment = require('../../../Domains/threads/entities/ThreadComment');
 
 describe('ThreadCommentRepositoryPostgres', () => {
   beforeEach(async () => {
@@ -98,13 +99,15 @@ describe('ThreadCommentRepositoryPostgres', () => {
         userId: 'user-123',
       });
 
+      const dummyDate = new Date();
       const expected = [
-        {
+        new ThreadComment({
           id: 'comment-123',
-          threadId: 'thread-123',
-          userId: 'user-123',
+          username: 'dicoding',
           content: 'content',
-        },
+          date: dummyDate.toISOString(),
+          replies: [],
+        }),
       ];
 
       const commentRepo = new ThreadCommentRepositoryPostgres(pool, () => {});
@@ -112,9 +115,10 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
       expect(comments).toHaveLength(expected.length);
       expect(comments[0].id).toEqual(expected[0].id);
-      expect(comments[0].threadId).toEqual(expected[0].threadId);
-      expect(comments[0].userId).toEqual(expected[0].userId);
+      expect(comments[0].username).toEqual(expected[0].username);
       expect(comments[0].content).toEqual(expected[0].content);
+      expect(comments[0].date).toBeDefined();
+      expect(comments[0].replies).toHaveLength(expected[0].replies.length);
     });
   });
 });

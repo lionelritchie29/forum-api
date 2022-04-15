@@ -1,5 +1,6 @@
 const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
+const ThreadComment = require('../../Domains/threads/entities/ThreadComment');
 const ThreadCommentCreated = require('../../Domains/threads/entities/ThreadCommentCreated');
 const ThreadCommentRepository = require('../../Domains/threads/ThreadCommentRepository');
 
@@ -63,12 +64,26 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
 
   async getCommentsByThread(threadId) {
     const query = {
-      text: 'SELECT * FROM thread_comments WHERE "threadId" = $1 AND is_deleted = false',
+      text: `
+        SELECT tc.id, u.username, tc.content, tc."createdAt" as date
+        FROM thread_comments tc
+        JOIN users u ON u.id = tc."userId"
+        WHERE "threadId" = $1 AND is_deleted = false
+      `,
       values: [threadId],
     };
 
     const result = await this._pool.query(query);
-    return result.rows;
+    return result.rows.map(
+      (row) =>
+        new ThreadComment({
+          id: row.id,
+          username: row.username,
+          date: row.date.toISOString(),
+          content: row.content,
+          replies: [],
+        }),
+    );
   }
 }
 
