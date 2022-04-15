@@ -29,7 +29,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
 
   async deleteComment(id) {
     const query = {
-      text: 'UPDATE thread_comments SET is_deleted = true WHERE id = $1',
+      text: 'UPDATE thread_comments SET is_deleted = true WHERE id = $1 AND is_deleted = false',
       values: [id],
     };
 
@@ -39,7 +39,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
 
   async verifyComment(id) {
     const query = {
-      text: 'SELECT * FROM thread_comments WHERE id = $1',
+      text: 'SELECT * FROM thread_comments WHERE id = $1 AND is_deleted = false',
       values: [id],
     };
 
@@ -51,7 +51,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
 
   async verifyCommentOwner(id, userId) {
     const query = {
-      text: 'SELECT * FROM thread_comments WHERE id = $1 AND "userId" = $2',
+      text: 'SELECT * FROM thread_comments WHERE id = $1 AND "userId" = $2 AND is_deleted = false',
       values: [id, userId],
     };
 
@@ -59,6 +59,16 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
     if (!result.rowCount) {
       throw new AuthorizationError('Comment hanya dapat dihapus oleh owner');
     }
+  }
+
+  async getCommentsByThread(threadId) {
+    const query = {
+      text: 'SELECT * FROM thread_comments WHERE "threadId" = $1 AND is_deleted = false',
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows;
   }
 }
 

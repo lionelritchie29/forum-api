@@ -15,6 +15,10 @@ class ThreadCommentRepository {
   async verifyCommentOwner(id, userId) {
     throw new Error('THREAD_COMMENT_REPOSITORY.VERIFY_COMMENT_OWNER_NOT_IMPLEMENTED');
   }
+
+  async getCommentsByThread(threadId) {
+    throw new Error('THREAD_COMMENT_REPOSITORY.GET_COMMENT_BY_THREAD_NOT_IMPLEMENTED');
+  }
 }
 
 module.exports = ThreadCommentRepository;

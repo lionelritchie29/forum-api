@@ -19,5 +19,9 @@ describe('ThreadCommentRepository', () => {
     await expect(() =>
       commentRepo.verifyCommentOwner('comment-123', 'user-123'),
     ).rejects.toThrowError('THREAD_COMMENT_REPOSITORY.VERIFY_COMMENT_OWNER_NOT_IMPLEMENTED');
+
+    await expect(() => commentRepo.getCommentsByThread('thread-123')).rejects.toThrowError(
+      'THREAD_COMMENT_REPOSITORY.GET_COMMENT_BY_THREAD_NOT_IMPLEMENTED',
+    );
   });
 });
