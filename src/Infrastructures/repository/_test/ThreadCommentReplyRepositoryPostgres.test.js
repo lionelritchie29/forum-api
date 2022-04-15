@@ -31,8 +31,11 @@ describe('ThreadCommentReplyRepositoryPostgres', () => {
     const repo = new ThreadCommentReplyRepositoryPostgres(pool, idGen);
     const addedComment = await repo.addReply('user-123', 'comment-123', 'content');
 
+    const added = await ThreadCommentRepliesTableTestHelper.getReply(addedComment.id);
+
     expect(addedComment.owner).toEqual('user-123');
     expect(addedComment.id).toEqual('reply-123');
     expect(addedComment.content).toEqual('content');
+    expect(added).not.toEqual(null);
   });
 });
