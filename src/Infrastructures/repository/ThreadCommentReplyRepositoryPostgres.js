@@ -1,3 +1,5 @@
+const AuthorizationError = require('../../Commons/exceptions/AuthorizationError');
+const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const ThreadCommentReplyCreated = require('../../Domains/threads/entities/ThreadCommentReplyCreated');
 const ThreadCommentReplyRepository = require('../../Domains/threads/ThreadCommentReplyRepository');
 
@@ -22,6 +24,40 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
       content: reply.content,
       owner: reply.userId,
     });
+  }
+
+  async verifyReply(id) {
+    const query = {
+      text: 'SELECT * FROM thread_comment_replies WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new NotFoundError('Reply tidak valid');
+    }
+  }
+
+  async verifyReplyOwner(id, userId) {
+    const query = {
+      text: 'SELECT * FROM thread_comment_replies WHERE id = $1 AND "userId" = $2',
+      values: [id, userId],
+    };
+
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new AuthorizationError('Reply hanya dapat dihapus oleh owner');
+    }
+  }
+
+  async deleteReply(id) {
+    const query = {
+      text: 'UPDATE thread_comment_replies SET is_deleted = true WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rowCount > 0;
   }
 }
 
