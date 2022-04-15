@@ -4,7 +4,10 @@ exports.shorthands = undefined;
 
 exports.up = (pgm) => {
   pgm.addColumns('thread_comments', {
-    is_deleted: 'BOOLEAN',
+    is_deleted: {
+      type: 'BOOLEAN',
+      default: false,
+    },
   });
 
   pgm.sql('UPDATE thread_comments SET is_deleted = false WHERE is_deleted = NULL');
