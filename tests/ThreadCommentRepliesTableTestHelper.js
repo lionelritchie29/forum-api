@@ -9,8 +9,8 @@ const ThreadCommentRepliesTableTestHelper = {
     content = 'content',
   }) {
     const query = {
-      text: 'INSERT * FROM thread_comment_replies VALUES ($1, $2, $3, $4, $5)',
-      values: [id, content, commentId, userId, new Date()],
+      text: 'INSERT * FROM thread_comment_replies VALUES ($1, $2, $3, $4, $5, $6)',
+      values: [id, content, commentId, userId, new Date(), false],
     };
 
     await pool.query(query);

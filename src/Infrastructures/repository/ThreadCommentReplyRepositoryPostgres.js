@@ -11,8 +11,8 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
   async addReply(userId, commentId, content) {
     const id = `reply-${this._idGenerator()}`;
     const query = {
-      text: 'INSERT INTO thread_comment_replies VALUES ($1, $2, $3, $4, $5) RETURNING id, content, "userId"',
-      values: [id, content, commentId, userId, new Date()],
+      text: 'INSERT INTO thread_comment_replies VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, content, "userId"',
+      values: [id, content, commentId, userId, new Date(), false],
     };
 
     const result = await this._pool.query(query);
