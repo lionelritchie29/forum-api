@@ -19,6 +19,7 @@ describe('ThreadComment', () => {
       content: 'content',
       username: 'lionel',
       date: 123,
+      isDeleted: 123,
       replies: {},
     };
 
@@ -31,6 +32,7 @@ describe('ThreadComment', () => {
       content: 'content',
       username: 'lionel',
       date: '2021-08-08T07:59:48.766Z',
+      isDeleted: true,
       replies: [],
     };
 

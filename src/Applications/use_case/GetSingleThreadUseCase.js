@@ -13,10 +13,22 @@ class GetSingleThreadUseCase {
 
     for (const comment of comments) {
       const replies = await this._replyRepository.getRepliesByComment(comment.id);
-      if (replies) comment.replies = replies;
+
+      const repliesWithoutDeletedAt = replies.map((r) => {
+        const { isDeleted, ...filtered } = r;
+        if (isDeleted) filtered.content = '**balasan telah dihapus**';
+        return filtered;
+      });
+      comment.replies = repliesWithoutDeletedAt;
     }
 
-    thread.comments = comments;
+    const commentsWithoutDeletedAt = comments.map((c) => {
+      const { isDeleted, ...filtered } = c;
+      if (isDeleted) filtered.content = '**komentar telah dihapus**';
+      return filtered;
+    });
+
+    thread.comments = commentsWithoutDeletedAt;
 
     return thread;
   }

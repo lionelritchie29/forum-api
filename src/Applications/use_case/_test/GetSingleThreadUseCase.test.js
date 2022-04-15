@@ -36,6 +36,26 @@ describe('GetSingleThreadUseCase', () => {
           ],
           content: 'content',
         },
+        {
+          id: 'comment-456',
+          username: 'lionel',
+          date: dummyDate.toISOString(),
+          replies: [
+            {
+              id: 'reply-123',
+              content: '**balasan telah dihapus**',
+              date: dummyDate.toISOString(),
+              username: 'lionel',
+            },
+            {
+              id: 'reply-456',
+              content: 'sebuah balasan',
+              date: dummyDate.toISOString(),
+              username: 'lionel',
+            },
+          ],
+          content: '**komentar telah dihapus**',
+        },
       ],
     };
 
@@ -61,6 +81,15 @@ describe('GetSingleThreadUseCase', () => {
           username: 'lionel',
           date: dummyDate.toISOString(),
           content: 'content',
+          isDeleted: false,
+          replies: [],
+        }),
+        new ThreadComment({
+          id: 'comment-456',
+          username: 'lionel',
+          date: dummyDate.toISOString(),
+          content: 'content hapus',
+          isDeleted: true,
           replies: [],
         }),
       ]),
@@ -71,15 +100,17 @@ describe('GetSingleThreadUseCase', () => {
       Promise.resolve([
         new ThreadCommentReply({
           id: 'reply-123',
-          content: '**balasan telah dihapus**',
+          content: 'balasan hehe',
           date: dummyDate.toISOString(),
           username: 'lionel',
+          isDeleted: true,
         }),
         new ThreadCommentReply({
           id: 'reply-456',
           content: 'sebuah balasan',
           date: dummyDate.toISOString(),
           username: 'lionel',
+          isDeleted: false,
         }),
       ]),
     );

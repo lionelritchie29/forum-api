@@ -64,7 +64,7 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
   async getRepliesByComment(threadId) {
     const query = {
       text: `
-        SELECT tcr.id, tcr.content, tcr."createdAt" as "date", u.username
+        SELECT tcr.id, tcr.content, tcr."createdAt" as "date", u.username, tcr.is_deleted
         FROM thread_comment_replies tcr
         JOIN users u ON u.id = tcr."userId"
         WHERE tcr."threadCommentId" = $1
@@ -80,6 +80,7 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
           content: row.content,
           date: row.date.toISOString(),
           username: row.username,
+          isDeleted: row.is_deleted,
         }),
     );
   }

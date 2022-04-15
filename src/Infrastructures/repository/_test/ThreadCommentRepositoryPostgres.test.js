@@ -106,6 +106,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
           username: 'dicoding',
           content: 'content',
           date: dummyDate.toISOString(),
+          isDeleted: false,
           replies: [],
         }),
       ];
@@ -117,6 +118,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
       expect(comments[0].id).toEqual(expected[0].id);
       expect(comments[0].username).toEqual(expected[0].username);
       expect(comments[0].content).toEqual(expected[0].content);
+      expect(comments[0].isDeleted).toEqual(expected[0].isDeleted);
       expect(comments[0].date).toBeDefined();
       expect(comments[0].replies).toHaveLength(expected[0].replies.length);
     });

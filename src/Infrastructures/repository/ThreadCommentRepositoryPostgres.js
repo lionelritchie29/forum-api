@@ -65,7 +65,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
   async getCommentsByThread(threadId) {
     const query = {
       text: `
-        SELECT tc.id, u.username, tc.content, tc."createdAt" as date
+        SELECT tc.id, u.username, tc.content, tc."createdAt" as date, tc.is_deleted
         FROM thread_comments tc
         JOIN users u ON u.id = tc."userId"
         WHERE "threadId" = $1
@@ -81,6 +81,7 @@ class ThreadCommentRepositoryPostgres extends ThreadCommentRepository {
           username: row.username,
           date: row.date.toISOString(),
           content: row.content,
+          isDeleted: row.is_deleted,
           replies: [],
         }),
     );

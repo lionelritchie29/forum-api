@@ -19,6 +19,7 @@ describe('ThreadCommentReply', () => {
       content: 'content',
       username: 'lionel',
       date: 123,
+      isDeleted: false,
     };
 
     expect(() => new ThreadCommentReply(payload)).toThrowError(
@@ -32,6 +33,7 @@ describe('ThreadCommentReply', () => {
       content: 'content',
       username: 'lionel',
       date: '2021-08-08T07:59:48.766Z',
+      isDeleted: true,
     };
 
     const reply = new ThreadCommentReply(payload);
@@ -40,5 +42,6 @@ describe('ThreadCommentReply', () => {
     expect(reply.content).toEqual(payload.content);
     expect(reply.username).toEqual(payload.username);
     expect(reply.date).toEqual(payload.date);
+    expect(reply.isDeleted).toEqual(payload.isDeleted);
   });
 });
