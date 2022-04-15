@@ -12,6 +12,10 @@ describe('ThreadCommentRepository', () => {
       'THREAD_COMMENT_REPOSITORY.DELETE_COMMENT_NOT_IMPLEMENTED',
     );
 
+    await expect(() => commentRepo.verifyComment('comment-123')).rejects.toThrowError(
+      'THREAD_COMMENT_REPOSITORY.VERIFY_COMMENT_NOT_IMPLEMENTED',
+    );
+
     await expect(() =>
       commentRepo.verifyCommentOwner('comment-123', 'user-123'),
     ).rejects.toThrowError('THREAD_COMMENT_REPOSITORY.VERIFY_COMMENT_OWNER_NOT_IMPLEMENTED');

@@ -5,11 +5,12 @@ const ThreadCommentCreated = require('../../../Domains/threads/entities/ThreadCo
 const pool = require('../../database/postgres/pool');
 const ThreadCommentRepositoryPostgres = require('../ThreadCommentRepositoryPostgres');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
+const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 
 describe('ThreadCommentRepositoryPostgres', () => {
   afterEach(async () => {
-    await ThreadsTableTesthelper.cleanTable();
     await UsersTableTestHelper.cleanTable();
+    await ThreadsTableTesthelper.cleanTable();
     await ThreadCommentsTableTestHelper.cleanTable();
   });
 
@@ -56,8 +57,40 @@ describe('ThreadCommentRepositoryPostgres', () => {
     });
   });
 
-  describe('verifyThreadOwner function', () => {
-    it('should not throw error when thread owner is valid', async () => {
+  describe('veriftComment function', () => {
+    it('should not throw error when comment is valid', async () => {
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTesthelper.addThread({ threadId: 'thread-123', userId: 'user-123' });
+      await ThreadCommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        userId: 'user-123',
+      });
+
+      const commentRepo = new ThreadCommentRepositoryPostgres(pool, () => {});
+
+      await expect(commentRepo.verifyComment('comment-123')).resolves.not.toThrowError(
+        NotFoundError,
+      );
+    });
+
+    it('should throw error when comment is not valid', async () => {
+      await UsersTableTestHelper.addUser({ id: 'user-123' });
+      await ThreadsTableTesthelper.addThread({ threadId: 'thread-123', userId: 'user-123' });
+      await ThreadCommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        userId: 'user-123',
+      });
+
+      const commentRepo = new ThreadCommentRepositoryPostgres(pool, () => {});
+
+      await expect(commentRepo.verifyComment('comment-999')).rejects.toThrowError(NotFoundError);
+    });
+  });
+
+  describe('verifyCommentOwner function', () => {
+    it('should not throw error when comment owner is valid', async () => {
       await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTesthelper.addThread({ threadId: 'thread-123', userId: 'user-123' });
       await ThreadCommentsTableTestHelper.addComment({
