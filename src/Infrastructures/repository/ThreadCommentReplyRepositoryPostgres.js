@@ -67,7 +67,7 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
         SELECT tcr.id, tcr.content, tcr."createdAt" as "date", u.username
         FROM thread_comment_replies tcr
         JOIN users u ON u.id = tcr."userId"
-        WHERE tcr.is_deleted = false AND tcr."threadCommentId" = $1
+        WHERE tcr."threadCommentId" = $1
       `,
       values: [threadId],
     };
