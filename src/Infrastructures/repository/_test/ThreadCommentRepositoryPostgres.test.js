@@ -20,6 +20,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
 
   describe('addComment function', () => {
     it('should return added comment correctly', async () => {
+      await UsersTableTestHelper.cleanTable();
       await UsersTableTestHelper.addUser({ id: 'user-123' });
       await ThreadsTableTesthelper.addThread({ threadId: 'thread-123', userId: 'user-123' });
       const fakeIdGen = () => '123';

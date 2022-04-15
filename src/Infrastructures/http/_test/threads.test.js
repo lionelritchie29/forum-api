@@ -524,4 +524,139 @@ describe('/threads endpoint', () => {
       expect(responseJson.data.addedReply).toBeDefined();
     });
   });
+
+  describe('when DELETE /thread/{threadId}/comments/{commentId}/replies/{replyId}', () => {
+    beforeEach(async () => {
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123' });
+      await ThreadCommentsTableTestHelper.addComment({
+        id: 'comment-123',
+        threadId: 'thread-123',
+        userId: 'user-123',
+      });
+      await ThreadCommentRepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        commentId: 'comment-123',
+        userId: 'user-123',
+      });
+    });
+
+    it('should response with 401 if no authorization header passed', async () => {
+      const server = await createServer(container);
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-123/comments/comment-123/replies/reply-123',
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(responseJson.statusCode).toEqual(401);
+      expect(responseJson.error).toEqual('Unauthorized');
+      expect(responseJson.message).toEqual('Missing authentication');
+    });
+
+    it('should response with 404 if thread not found', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-999/comments/comment-123/replies/reply-123',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.message).toEqual('Thread tidak valid');
+    });
+
+    it('should response with 404 if comment not found', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-123/comments/comment-999/replies/reply-123',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.message).toEqual('Comment tidak valid');
+    });
+
+    it('should response with 404 if reply not found', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-123/comments/comment-123/replies/reply-999',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.message).toEqual('Reply tidak valid');
+    });
+
+    it('should response with 403 if reply is deleted not by owner', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-999',
+      });
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-123/comments/comment-123/replies/reply-123',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(403);
+      expect(responseJson.message).toEqual('Reply hanya dapat dihapus oleh owner');
+    });
+
+    it('should response with 200 if reply is deleted succesfully', async () => {
+      const server = await createServer(container);
+      const authTokenManager = container.getInstance(AuthenticationTokenManager.name);
+      const accessToken = await authTokenManager.createAccessToken({
+        username: 'lionel',
+        id: 'user-123',
+      });
+
+      const response = await server.inject({
+        method: 'DELETE',
+        url: '/threads/thread-123/comments/comment-123/replies/reply-123',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+    });
+  });
 });
