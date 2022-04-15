@@ -6,6 +6,7 @@ const pool = require('../../database/postgres/pool');
 const ThreadCommentReplyRepositoryPostgres = require('../ThreadCommentReplyRepositoryPostgres');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
+const ThreadCommentReply = require('../../../Domains/threads/entities/ThreadCommentReply');
 
 describe('ThreadCommentReplyRepositoryPostgres', () => {
   afterAll(async () => {
@@ -111,6 +112,35 @@ describe('ThreadCommentReplyRepositoryPostgres', () => {
 
       expect(deleteStatus).toEqual(true);
       expect(reply.is_deleted).toEqual(true);
+    });
+  });
+
+  describe('getRepliesByComment function', () => {
+    it('should return replies related to a comment correctly', async () => {
+      await ThreadCommentRepliesTableTestHelper.addReply({
+        id: 'reply-123',
+        commentId: 'comment-123',
+        userId: 'user-123',
+      });
+
+      const now = new Date();
+      const expected = [
+        new ThreadCommentReply({
+          id: 'reply-123',
+          username: 'dicoding',
+          content: 'content',
+          date: now.toISOString(),
+        }),
+      ];
+
+      const replyRepo = new ThreadCommentReplyRepositoryPostgres(pool, () => {});
+      const replies = await replyRepo.getRepliesByComment('comment-123');
+
+      expect(replies).toHaveLength(expected.length);
+      expect(replies[0].id).toEqual(expected[0].id);
+      expect(replies[0].username).toEqual(expected[0].username);
+      expect(replies[0].content).toEqual(expected[0].content);
+      expect(replies[0].date).toBeDefined();
     });
   });
 });

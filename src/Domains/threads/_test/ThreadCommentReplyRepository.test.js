@@ -19,5 +19,9 @@ describe('ThreadCommentReplyRepository', () => {
     await expect(replyRepo.deleteReply('reply-123')).rejects.toThrowError(
       'THREAD_COMMENT_REPLY_REPOSITORY.DELETE_REPLY_NOT_IMPLEMENTED',
     );
+
+    await expect(replyRepo.getRepliesByComment('comment-123')).rejects.toThrowError(
+      'THREAD_COMMENT_REPLY_REPOSITORY.GET_REPLIES_BY_COMMENT_NOT_IMPLEMENTED',
+    );
   });
 });

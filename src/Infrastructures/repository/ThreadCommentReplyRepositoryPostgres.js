@@ -2,6 +2,7 @@ const AuthorizationError = require('../../Commons/exceptions/AuthorizationError'
 const NotFoundError = require('../../Commons/exceptions/NotFoundError');
 const ThreadCommentReplyCreated = require('../../Domains/threads/entities/ThreadCommentReplyCreated');
 const ThreadCommentReplyRepository = require('../../Domains/threads/ThreadCommentReplyRepository');
+const ThreadCommentReply = require('../../Domains/threads/entities/ThreadCommentReply');
 
 class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository {
   constructor(pool, idGenerator) {
@@ -58,6 +59,29 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
 
     const result = await this._pool.query(query);
     return result.rowCount > 0;
+  }
+
+  async getRepliesByComment(threadId) {
+    const query = {
+      text: `
+        SELECT tcr.id, tcr.content, tcr."createdAt" as "date", u.username
+        FROM thread_comment_replies tcr
+        JOIN users u ON u.id = tcr."userId"
+        WHERE tcr.is_deleted = false AND tcr."threadCommentId" = $1
+      `,
+      values: [threadId],
+    };
+
+    const result = await this._pool.query(query);
+    return result.rows.map(
+      (row) =>
+        new ThreadCommentReply({
+          id: row.id,
+          content: row.content,
+          date: row.date.toISOString(),
+          username: row.username,
+        }),
+    );
   }
 }
 
