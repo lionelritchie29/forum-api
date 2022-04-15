@@ -28,7 +28,7 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
 
   async verifyReply(id) {
     const query = {
-      text: 'SELECT * FROM thread_comment_replies WHERE id = $1',
+      text: 'SELECT * FROM thread_comment_replies WHERE id = $1 AND is_deleted = false',
       values: [id],
     };
 
@@ -40,7 +40,7 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
 
   async verifyReplyOwner(id, userId) {
     const query = {
-      text: 'SELECT * FROM thread_comment_replies WHERE id = $1 AND "userId" = $2',
+      text: 'SELECT * FROM thread_comment_replies WHERE id = $1 AND "userId" = $2 AND is_deleted = false',
       values: [id, userId],
     };
 
@@ -52,7 +52,7 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
 
   async deleteReply(id) {
     const query = {
-      text: 'UPDATE thread_comment_replies SET is_deleted = true WHERE id = $1',
+      text: 'UPDATE thread_comment_replies SET is_deleted = true WHERE id = $1 AND is_deleted = false',
       values: [id],
     };
 
