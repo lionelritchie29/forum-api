@@ -4,7 +4,6 @@ const DeleteCommentUseCase = require('../../../../Applications/use_case/DeleteCo
 const AddReplyUseCase = require('../../../../Applications/use_case/AddReplyUseCase');
 const DeleteReplyUseCase = require('../../../../Applications/use_case/DeleteReplyuseCase');
 const GetSingleThreadUseCase = require('../../../../Applications/use_case/GetSingleThreadUseCase');
-const temp = require('../../../../Infrastructures/container');
 
 class ThreadsHandler {
   constructor(container) {
@@ -102,7 +101,7 @@ class ThreadsHandler {
 
   async getThreadHandler(request, h) {
     const { threadId } = request.params;
-    const getSingleThreadUseCase = temp.getInstance(GetSingleThreadUseCase.name);
+    const getSingleThreadUseCase = this._container.getInstance(GetSingleThreadUseCase.name);
     const thread = await getSingleThreadUseCase.execute(threadId);
 
     const response = h.response({
