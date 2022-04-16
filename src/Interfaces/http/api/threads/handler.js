@@ -101,7 +101,6 @@ class ThreadsHandler {
   }
 
   async getThreadHandler(request, h) {
-    // try {
     const { threadId } = request.params;
     const getSingleThreadUseCase = temp.getInstance(GetSingleThreadUseCase.name);
     const thread = await getSingleThreadUseCase.execute(threadId);
@@ -114,9 +113,6 @@ class ThreadsHandler {
     });
     response.code(200);
     return response;
-    // } catch (e) {
-    //   console.log(e);
-    // }
   }
 }
 

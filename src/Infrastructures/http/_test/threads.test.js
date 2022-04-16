@@ -688,7 +688,7 @@ describe('/threads endpoint', () => {
     });
 
     it('should response with 404 if thread not exist', async () => {
-      const server = await createServer();
+      const server = await createServer(container);
 
       const response = await server.inject({
         method: 'GET',
@@ -702,7 +702,7 @@ describe('/threads endpoint', () => {
     });
 
     it('should response with 200 and the specified thread correctly', async () => {
-      const server = await createServer();
+      const server = await createServer(container);
 
       const response = await server.inject({
         method: 'GET',
