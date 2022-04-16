@@ -3,6 +3,7 @@ class ThreadCommentReplyCreated {
   constructor(payload) {
     this._validate(payload);
 
+    // eslint-disable-next-line object-curly-newline
     const { userId, threadId, commentId, content } = payload;
     this.userId = userId;
     this.threadId = threadId;
