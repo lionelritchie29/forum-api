@@ -20,6 +20,7 @@ describe('GetSingleThreadUseCase', () => {
           id: 'comment-123',
           username: 'lionel',
           date: dummyDate.toISOString(),
+          likeCount: 1,
           replies: [
             {
               id: 'reply-123',
@@ -42,6 +43,7 @@ describe('GetSingleThreadUseCase', () => {
           id: 'comment-456',
           username: 'lionel',
           date: dummyDate.toISOString(),
+          likeCount: 0,
           replies: [
             {
               id: 'reply-321',
@@ -87,6 +89,7 @@ describe('GetSingleThreadUseCase', () => {
           date: dummyDate.toISOString(),
           content: 'content',
           isDeleted: false,
+          likeCount: 1,
           replies: [],
         }),
         new ThreadComment({
@@ -95,6 +98,7 @@ describe('GetSingleThreadUseCase', () => {
           date: dummyDate.toISOString(),
           content: 'content hapus',
           isDeleted: true,
+          likeCount: 0,
           replies: [],
         }),
       ]),
