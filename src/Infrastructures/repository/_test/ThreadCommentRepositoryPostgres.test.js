@@ -55,7 +55,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
     });
   });
 
-  describe('veriftComment function', () => {
+  describe('verifyComment function', () => {
     it('should not throw error when comment is valid', async () => {
       await ThreadCommentsTableTestHelper.addComment({ id: 'comment-123', threadId: 'thread-123' });
       const commentRepo = new ThreadCommentRepositoryPostgres(pool, () => {});
@@ -107,6 +107,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
           content: 'content',
           date: dummyDate.toISOString(),
           isDeleted: false,
+          likeCount: 0,
           replies: [],
         }),
       ];
@@ -120,6 +121,7 @@ describe('ThreadCommentRepositoryPostgres', () => {
       expect(comments[0].content).toEqual(expected[0].content);
       expect(comments[0].isDeleted).toEqual(expected[0].isDeleted);
       expect(comments[0].date).toBeDefined();
+      expect(comments[0].likeCount).toEqual(expected[0].likeCount);
       expect(comments[0].replies).toHaveLength(expected[0].replies.length);
     });
   });
