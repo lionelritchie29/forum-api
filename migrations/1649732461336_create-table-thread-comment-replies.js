@@ -1,8 +1,3 @@
-/* eslint-disable camelcase */
-/* eslint-disable linebreak-style */
-
-exports.shorthands = undefined;
-
 exports.up = (pgm) => {
   pgm.createTable('thread_comment_replies', {
     id: {
