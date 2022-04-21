@@ -20,7 +20,15 @@ describe('AddCommentUseCase', () => {
     threadRepository.verifyThread = jest.fn().mockImplementation(() => Promise.resolve);
 
     const commentRepository = new ThreadCommentRepository();
-    commentRepository.addComment = jest.fn().mockImplementation(() => Promise.resolve(expected));
+    commentRepository.addComment = jest.fn().mockImplementation(() =>
+      Promise.resolve(
+        new ThreadCommentCreated({
+          id: 'thread-123',
+          content: 'content',
+          owner: 'user-123',
+        }),
+      ),
+    );
 
     const addCommentUseCase = new AddCommentUseCase({
       threadRepository,

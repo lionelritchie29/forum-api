@@ -24,7 +24,15 @@ describe('AddReplyUseCase', () => {
     mockCommentRepo.verifyComment = jest.fn().mockImplementation(() => Promise.resolve);
 
     const mockReplyRepo = new ThreadCommentReplyRepository();
-    mockReplyRepo.addReply = jest.fn().mockImplementation(() => Promise.resolve(expected));
+    mockReplyRepo.addReply = jest.fn().mockImplementation(() =>
+      Promise.resolve(
+        new ThreadCommentReplyCreated({
+          id: 'reply-123',
+          content: 'content',
+          owner: 'user-123',
+        }),
+      ),
+    );
 
     const addReplyUseCase = new AddReplyUseCase({
       threadRepository: mockThreadRepo,
