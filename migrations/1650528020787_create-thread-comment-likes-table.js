@@ -1,20 +1,14 @@
 exports.up = (pgm) => {
-  pgm.createTable('thread_comment_replies', {
-    id: {
-      type: 'VARCHAR(50)',
-      primaryKey: true,
-    },
-    content: {
-      type: 'TEXT',
-      notNull: true,
-    },
+  pgm.createTable('thread_comment_likes', {
     threadCommentId: {
       type: 'TEXT',
       notNull: true,
+      primaryKey: true,
     },
     userId: {
       type: 'TEXT',
       notNull: true,
+      primaryKey: true,
     },
     createdAt: {
       type: 'TIMESTAMP',
@@ -23,7 +17,7 @@ exports.up = (pgm) => {
     },
   });
 
-  pgm.addConstraint('thread_comment_replies', 'threads_comments_replies_thread_comment_fk', {
+  pgm.addConstraint('thread_comment_likes', 'threads_comments_likes_comment_fk', {
     foreignKeys: {
       columns: 'threadCommentId',
       references: 'thread_comments(id)',
@@ -32,7 +26,7 @@ exports.up = (pgm) => {
     },
   });
 
-  pgm.addConstraint('thread_comment_replies', 'threads_comments_replies_user_fk', {
+  pgm.addConstraint('thread_comment_likes', 'threads_comments_likes_user_fk', {
     foreignKeys: {
       columns: 'userId',
       references: 'users(id)',
@@ -43,7 +37,7 @@ exports.up = (pgm) => {
 };
 
 exports.down = (pgm) => {
-  pgm.dropConstraint('thread_comment_replies', 'threads_comments_replies_thread_comment_fk');
-  pgm.dropConstraint('thread_comment_replies', 'threads_comments_replies_user_fk');
-  pgm.dropTable('thread_comment_replies');
+  pgm.dropConstraint('thread_comment_likes', 'threads_comments_likes_comment_fk');
+  pgm.dropConstraint('thread_comment_likes', 'threads_comments_likes_user_fk');
+  pgm.dropTable('thread_comment_likes');
 };
