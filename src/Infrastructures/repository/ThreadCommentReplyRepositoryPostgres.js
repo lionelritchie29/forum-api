@@ -61,16 +61,16 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
     return result.rowCount > 0;
   }
 
-  async getRepliesByComment(threadId) {
+  async getRepliesByComment(commentIds) {
     const query = {
       text: `
-        SELECT tcr.id, tcr.content, tcr."createdAt" as "date", u.username, tcr.is_deleted
+        SELECT tcr.*, u.username
         FROM thread_comment_replies tcr
         JOIN users u ON u.id = tcr."userId"
-        WHERE tcr."threadCommentId" = $1
+        WHERE tcr."threadCommentId" = ANY($1::text[])
         ORDER BY tcr."createdAt" asc
       `,
-      values: [threadId],
+      values: [commentIds],
     };
 
     const result = await this._pool.query(query);
@@ -79,8 +79,9 @@ class ThreadCommentReplyRepositoryPostgres extends ThreadCommentReplyRepository 
         new ThreadCommentReply({
           id: row.id,
           content: row.content,
-          date: row.date.toISOString(),
+          date: row.createdAt.toISOString(),
           username: row.username,
+          threadCommentId: row.threadCommentId,
           isDeleted: row.is_deleted,
         }),
     );

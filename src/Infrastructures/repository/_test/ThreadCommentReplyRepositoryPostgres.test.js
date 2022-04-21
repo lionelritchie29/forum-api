@@ -131,17 +131,19 @@ describe('ThreadCommentReplyRepositoryPostgres', () => {
           content: 'content',
           date: now.toISOString(),
           isDeleted: false,
+          threadCommentId: 'comment-123',
         }),
       ];
 
       const replyRepo = new ThreadCommentReplyRepositoryPostgres(pool, () => {});
-      const replies = await replyRepo.getRepliesByComment('comment-123');
+      const replies = await replyRepo.getRepliesByComment(['comment-123']);
 
       expect(replies).toHaveLength(expected.length);
       expect(replies[0].id).toEqual(expected[0].id);
       expect(replies[0].username).toEqual(expected[0].username);
       expect(replies[0].content).toEqual(expected[0].content);
       expect(replies[0].isDeleted).toEqual(expected[0].isDeleted);
+      expect(replies[0].threadCommentId).toEqual(expected[0].threadCommentId);
       expect(replies[0].date).toBeDefined();
     });
   });

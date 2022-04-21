@@ -20,6 +20,7 @@ describe('ThreadCommentReply', () => {
       username: 'lionel',
       date: 123,
       isDeleted: false,
+      threadCommentId: {},
     };
 
     expect(() => new ThreadCommentReply(payload)).toThrowError(
@@ -34,6 +35,7 @@ describe('ThreadCommentReply', () => {
       username: 'lionel',
       date: '2021-08-08T07:59:48.766Z',
       isDeleted: true,
+      threadCommentId: 'comment-123',
     };
 
     const reply = new ThreadCommentReply(payload);

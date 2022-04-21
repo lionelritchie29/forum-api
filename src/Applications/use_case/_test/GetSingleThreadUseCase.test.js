@@ -25,12 +25,14 @@ describe('GetSingleThreadUseCase', () => {
               id: 'reply-123',
               content: '**balasan telah dihapus**',
               date: dummyDate.toISOString(),
+              threadCommentId: 'comment-123',
               username: 'lionel',
             },
             {
               id: 'reply-456',
               content: 'sebuah balasan',
               date: dummyDate.toISOString(),
+              threadCommentId: 'comment-123',
               username: 'lionel',
             },
           ],
@@ -42,15 +44,17 @@ describe('GetSingleThreadUseCase', () => {
           date: dummyDate.toISOString(),
           replies: [
             {
-              id: 'reply-123',
+              id: 'reply-321',
               content: '**balasan telah dihapus**',
               date: dummyDate.toISOString(),
+              threadCommentId: 'comment-456',
               username: 'lionel',
             },
             {
-              id: 'reply-456',
+              id: 'reply-654',
               content: 'sebuah balasan',
               date: dummyDate.toISOString(),
+              threadCommentId: 'comment-456',
               username: 'lionel',
             },
           ],
@@ -104,6 +108,7 @@ describe('GetSingleThreadUseCase', () => {
           content: 'balasan hehe',
           date: dummyDate.toISOString(),
           username: 'lionel',
+          threadCommentId: 'comment-123',
           isDeleted: true,
         }),
         new ThreadCommentReply({
@@ -111,6 +116,23 @@ describe('GetSingleThreadUseCase', () => {
           content: 'sebuah balasan',
           date: dummyDate.toISOString(),
           username: 'lionel',
+          threadCommentId: 'comment-123',
+          isDeleted: false,
+        }),
+        new ThreadCommentReply({
+          id: 'reply-321',
+          content: 'sebuah balasan',
+          date: dummyDate.toISOString(),
+          username: 'lionel',
+          threadCommentId: 'comment-456',
+          isDeleted: true,
+        }),
+        new ThreadCommentReply({
+          id: 'reply-654',
+          content: 'sebuah balasan',
+          date: dummyDate.toISOString(),
+          username: 'lionel',
+          threadCommentId: 'comment-456',
           isDeleted: false,
         }),
       ]),
@@ -126,7 +148,7 @@ describe('GetSingleThreadUseCase', () => {
     expect(mockThreadRepo.verifyThread).toBeCalledWith('thread-123');
     expect(mockThreadRepo.getThread).toBeCalledWith('thread-123');
     expect(mockCommentRepo.getCommentsByThread).toBeCalledWith('thread-123');
-    expect(mockReplyRepo.getRepliesByComment).toBeCalledTimes(expected.comments.length);
+    expect(mockReplyRepo.getRepliesByComment).toBeCalledWith(['comment-123', 'comment-456']);
 
     expect(result).toEqual(expected);
   });
