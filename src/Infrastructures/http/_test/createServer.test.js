@@ -23,9 +23,10 @@ describe('HTTP server', () => {
       url: '/',
     });
 
+    const responseJson = JSON.parse(response.payload);
     expect(response.statusCode).toEqual(200);
-    expect(response.data).toBeDefined();
-    expect(response.data).toEqual('Hello World');
+    expect(responseJson.data).toBeDefined();
+    expect(responseJson.data).toEqual('Hello World');
   });
 
   it('should handle server error correctly', async () => {
